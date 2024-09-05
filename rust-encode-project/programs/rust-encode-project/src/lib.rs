@@ -6,7 +6,6 @@ declare_id!("5sf3oNJKEARM9ia6yew3xGVcct8244xHxLEPQ4F2cFQb");
 #[program]
 pub mod solanapdas {
     // use std::task::Context;
-
     use super::*;
 
     #[cfg(not(feature = "program"))]
@@ -16,7 +15,6 @@ pub mod solanapdas {
         bank.balance = 0;
         bank.owner = *ctx.accounts.user.key;
         Ok(())
-
     }
 
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> ProgramResult {
@@ -42,11 +40,12 @@ pub mod solanapdas {
         let bank = &mut ctx.accounts.bank;
         let user = &mut ctx.accounts.user;
 
-        if bank.owner != user.key(){
+        if bank.owner != user.key() {
             return Err(ProgramError::IncorrectProgramId);
         }
 
         let rent = Rent::get()?.minimum_balance(bank.to_account_info().data_len());
+
         if **bank.to_account_info().lamports.borrow() < amount {
             return Err(ProgramError::InsufficientFunds)
         }
@@ -54,7 +53,6 @@ pub mod solanapdas {
         **bank.to_account_info().try_borrow_mut_lamports()? -= amount;
         **user.to_account_info().try_borrow_mut_lamports()? -= amount;
         Ok(())
-
     }
 
 }
@@ -82,7 +80,6 @@ pub struct Deposit<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
-
 }
 
 #[derive(Accounts)]
@@ -91,8 +88,6 @@ pub struct Withdraw<'info> {
     pub bank: Account<'info, Bank>,
     #[account(mut)]
     pub user: Signer<'info>,
-    
-
 }
 
 
